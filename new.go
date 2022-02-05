@@ -2,29 +2,30 @@ package main
 
 import (
 	"fmt"
-	"runtime"
+	"time"
 )
 
 func main() {
+	makeChannel := make(chan string)
 
-	runtime.GOMAXPROCS(1)
-	var pesan = make(chan string)
-	var katakanHalo = func(siapa string) {
-		var data = fmt.Sprintf("hello %s", siapa)
-		pesan <- data
+	go pengirim(makeChannel)
+	go penerima(makeChannel)
+
+	in := 0
+	fmt.Scanln(&in)
+}
+
+func pengirim(makeChannel chan string) {
+	for i := 0; i < 10; i++ {
+		makeChannel <- "ping"
 	}
 
-	go katakanHalo("bangsat")
-	go katakanHalo("kampret")
-	go katakanHalo("berak")
+}
 
-	var pesan1 = <-pesan
-	fmt.Println(pesan1)
-
-	var pesan2 = <-pesan
-	fmt.Println(pesan2)
-
-	var pesan3 = <-pesan
-	fmt.Println(pesan3)
-
+func penerima(makeChannel chan string) {
+	for {
+		msg := <-makeChannel
+		fmt.Println(msg)
+		time.Sleep(time.Second)
+	}
 }
