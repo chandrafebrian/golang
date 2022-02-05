@@ -6,26 +6,38 @@ import (
 )
 
 func main() {
-	makeChannel := make(chan string)
+	makeChannelPing := make(chan int)
+	makeChnnerlPong := make(chan int)
 
-	go pengirim(makeChannel)
-	go penerima(makeChannel)
+	go pinger(makeChannelPing, makeChnnerlPong)
+	go ponger(makeChannelPing, makeChnnerlPong)
 
-	in := 0
-	fmt.Scanln(&in)
-}
+	makeChannelPing <- 1
 
-func pengirim(makeChannel chan string) {
-	for i := 0; i < 10; i++ {
-		makeChannel <- "ping"
+	for {
+		time.Sleep(time.Second)
 	}
 
 }
 
-func penerima(makeChannel chan string) {
+func pinger(pinger <-chan int, ponger chan<- int) {
 	for {
-		msg := <-makeChannel
-		fmt.Println(msg)
+		<-pinger
+		fmt.Println("ping")
 		time.Sleep(time.Second)
+		ponger <- 1
+	}
+
+}
+
+// tanda panah di sebelah kiri chan (ponger <-chan int) berarti sebagai penerima
+// cara baca : variable ponger sebagai penerima nilai integer dari channel
+func ponger(pinger chan<- int, ponger <-chan int) {
+	for {
+		<-ponger
+		fmt.Println("pong")
+		time.Sleep(time.Second)
+		pinger <- 1
+
 	}
 }
