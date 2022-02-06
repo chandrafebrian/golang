@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+var d = 34
+
 func main() {
 	makeChannelPing := make(chan int)
 	makeChnnerlPong := make(chan int)
@@ -39,7 +41,7 @@ func pinger(pinger <-chan int, ponger chan<- int) {
 func ponger(pinger chan<- int, ponger <-chan int) {
 	for {
 		<-ponger
-		fmt.Println("pong")
+		fmt.Println(d)
 		time.Sleep(time.Second)
 		pinger <- 1
 
